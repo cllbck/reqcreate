@@ -57,10 +57,21 @@ def get_all_packages(py_files):
     packages.difference_update(extendet_packeges)
     return packages
 
+def clear_bultin_packages(packages):
+    built_in = set()
+    with open('built-in.txt', 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            built_in.add(line.split('\n')[0])
+    packages = set(packages)
+    packages.difference_update(built_in)
+    return packages
+
 def main():
     if args.dir:
         py_files = get_all_files(args.dir)
         packages = get_all_packages(py_files)
+        packages = clear_bultin_packages(packages)
         print(packages)
 
 if __name__ == '__main__':
