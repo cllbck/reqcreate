@@ -1,6 +1,7 @@
 import argparse
 import os
 import ast
+import yarg
 
 exclude_dirs = ('env', 'venv', '.git', '__pycache__', '.idea')
 
@@ -67,12 +68,19 @@ def clear_bultin_packages(packages):
     packages.difference_update(built_in)
     return packages
 
+def create_requirements_file(packages, dir):
+    file = os.path.join(dir, 'requirements.txt')
+    with open(file, 'w') as f:
+        for item in packages:
+            package = yarg.get(item)
+            f.write(f'{package.name}=={package.latest_release_id}\n')
+
 def main():
     if args.dir:
         py_files = get_all_files(args.dir)
         packages = get_all_packages(py_files)
         packages = clear_bultin_packages(packages)
-        print(packages)
+        create_requirements_file(packages, args.dir)
 
 if __name__ == '__main__':
     main()
