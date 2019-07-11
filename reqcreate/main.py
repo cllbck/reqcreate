@@ -5,7 +5,6 @@ import yarg
 
 exclude_dirs = ('env', 'venv', '.git', '__pycache__', '.idea')
 
-
 parser = argparse.ArgumentParser()
 parser.add_argument("--dir", help="project directory")
 args = parser.parse_args()
@@ -42,9 +41,15 @@ def find_packages_from_file(file):
                 for subnode in node.names:
                     if subnode.name.find('.') == -1:
                         packages.append(subnode.name)
-            elif isinstance(node, ast.ImportFrom) and node.module.find('.') == -1:
-                packages.append(node.module)
+                    else:
+                        packages.append(subnode.name.split('.')[0])
+            elif isinstance(node, ast.ImportFrom):
+                if node.module.find('.') == -1:
+                    packages.append(node.module)
+                else:
+                    packages.append(node.module.split('.')[0])
     return packages
+
 
 def get_all_packages(py_files):
     packages = []
@@ -53,20 +58,21 @@ def get_all_packages(py_files):
         packages.extend(find_packages_from_file(file))
         file_name = os.path.basename(file).split('.')[0]
         extendet_packeges.append(file_name)
-
     packages = set(packages)
     packages.difference_update(extendet_packeges)
     return packages
 
+
 def clear_bultin_packages(packages):
     built_in = set()
-    with open('built-in.txt', 'r') as f:
+    with open(os.path.join(os.path.dirname(__file__), 'built-in.txt'), 'r') as f:
         lines = f.readlines()
         for line in lines:
             built_in.add(line.split('\n')[0])
     packages = set(packages)
     packages.difference_update(built_in)
     return packages
+
 
 def create_requirements_file(packages, dir):
     file = os.path.join(dir, 'requirements.txt')
@@ -75,12 +81,24 @@ def create_requirements_file(packages, dir):
             package = yarg.get(item)
             f.write(f'{package.name}=={package.latest_release_id}\n')
 
+
+def pypi_names_of_package(import_names):
+    result = set()
+    with open(os.path.join(os.path.dirname(__file__), 'mapping.txt'), 'r') as f:
+        data = dict(x.strip().split(":") for x in f)
+    for name in import_names:
+        result.add(data.get(name, name))
+    return sorted(result, key=lambda s: s.lower())
+
+
 def main():
     if args.dir:
         py_files = get_all_files(args.dir)
         packages = get_all_packages(py_files)
         packages = clear_bultin_packages(packages)
+        packages = pypi_names_of_package(packages)
         create_requirements_file(packages, args.dir)
+
 
 if __name__ == '__main__':
     main()
