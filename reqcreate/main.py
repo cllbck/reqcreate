@@ -5,10 +5,6 @@ import yarg
 
 exclude_dirs = ('env', 'venv', '.git', '__pycache__', '.idea')
 
-parser = argparse.ArgumentParser()
-parser.add_argument("--dir", help="project directory")
-args = parser.parse_args()
-
 
 def filter_files(dir, files_list):
     filtered_files = [os.path.join(dir, file) for file in files_list if file.endswith('.py')]
@@ -17,10 +13,10 @@ def filter_files(dir, files_list):
 
 def get_all_files(project_dir):
     py_files = []
-    tree = os.walk(args.dir, topdown=True)
+    tree = os.walk(project_dir, topdown=True)
     for i in tree:
-        main_dirs = [os.path.join(args.dir, item) for item in i[1] if item not in exclude_dirs]
-        py_files.extend(filter_files(args.dir, i[2]))
+        main_dirs = [os.path.join(project_dir, item) for item in i[1] if item not in exclude_dirs]
+        py_files.extend(filter_files(project_dir, i[2]))
         break
 
     for dir in main_dirs:
@@ -69,17 +65,8 @@ def clear_bultin_packages(packages):
         lines = f.readlines()
         for line in lines:
             built_in.add(line.split('\n')[0])
-    packages = set(packages)
     packages.difference_update(built_in)
     return packages
-
-
-def create_requirements_file(packages, dir):
-    file = os.path.join(dir, 'requirements.txt')
-    with open(file, 'w') as f:
-        for item in packages:
-            package = yarg.get(item)
-            f.write(f'{package.name}=={package.latest_release_id}\n')
 
 
 def pypi_names_of_package(import_names):
@@ -91,7 +78,18 @@ def pypi_names_of_package(import_names):
     return sorted(result, key=lambda s: s.lower())
 
 
+def create_requirements_file(packages, dir):
+    file = os.path.join(dir, 'requirements.txt')
+    with open(file, 'w') as f:
+        for item in packages:
+            package = yarg.get(item)
+            f.write(f'{package.name}=={package.latest_release_id}\n')
+
+
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--dir", help="project directory")
+    args = parser.parse_args()
     if args.dir:
         py_files = get_all_files(args.dir)
         packages = get_all_packages(py_files)
