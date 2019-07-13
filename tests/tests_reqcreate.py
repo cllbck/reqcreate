@@ -1,5 +1,5 @@
 from reqcreate.main import get_all_files, find_packages_from_file, get_all_packages, \
-    clear_bultin_packages, create_requirements_file
+    clear_bultins_packages, create_requirements_file
 import pytest
 import os
 import shutil
@@ -75,7 +75,7 @@ def test_get_all_packages():
 
 
 def test_clear_bultin_packages():
-    assert clear_bultin_packages({'json', 'flask', 'random', 'werkzeug', 'datetime', 'geojson', 'celery', 'bson'}) == {
+    assert clear_bultins_packages({'json', 'flask', 'random', 'werkzeug', 'datetime', 'geojson', 'celery', 'bson'}) == {
          'flask', 'werkzeug', 'geojson', 'celery', 'bson'}
 
 
