@@ -105,15 +105,13 @@ def create_requirements_file(packages, dir):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--dir", help="project directory")
+    parser.add_argument("dir", help="project directory")
     args = parser.parse_args()
-    if args.dir:
-        py_files = get_all_files(args.dir)
-        packages = get_all_packages(py_files)
-        packages = clear_bultins_packages(packages)
-        packages = get_pypi_names(packages)
-        create_requirements_file(packages, args.dir)
-
+    py_files = get_all_files(args.dir)
+    packages = get_all_packages(py_files)
+    packages = clear_bultins_packages(packages)
+    packages = get_pypi_names(packages)
+    create_requirements_file(packages, args.dir)
 
 if __name__ == '__main__':
     main()
