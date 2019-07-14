@@ -1,6 +1,13 @@
 =================================================================================
 ``reqcreate`` - Create requirements file (from imports)  for a project without it
 =================================================================================
+.. image:: https://img.shields.io/travis/cllbck/reqcreate.svg
+        :target: https://travis-ci.org/cllbck/reqcreate
+
+
+.. image:: https://img.shields.io/pypi/v/reqcreate.svg
+        :target: https://pypi.python.org/pypi/reqcreate
+
 
 Installation
 ------------
