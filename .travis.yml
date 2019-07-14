@@ -9,5 +9,6 @@ script: pytest
 
 deploy:
   provider: pypi
+  skip_existing: true
   user: $PYPI_NAME
   password: $PYPI_PASS
