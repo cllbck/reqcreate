@@ -98,7 +98,7 @@ def create_requirements_file(packages, dir):
             for item in packages:
                 package = yarg.get(item)
                 f.write(f'{package.name}=={package.latest_release_id}\n')
-                logging.info(f'File requirements.txt is created')
+                logging.info(f'File  requirements.txt is created')
     except FileExistsError:
         logging.error('File requirements.txt already exist')
 
