@@ -1,0 +1,3 @@
+include README.rst
+include reqcreate/mapping.txt
+include reqcreate/built-in.txt
